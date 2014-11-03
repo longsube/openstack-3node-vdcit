@@ -212,11 +212,13 @@ Tạm dừng việc cài đặt trên CONTROLLER NODE, sau khi cài xong NETWORK
 - Cài đặt NEUTRON, ML2 và cấu hình GRE, sử dụng use case per-router per-tenant.
 Tải các gói cần thiết 
 ```sh
-apt-get update
+sudo rm -vf /var/lib/apt/lists/partial/*
+
+apt-get update -y && apt-get upgrade -y && apt-get dist-upgrade -y
 
 apt-get install git -y
 
-git clone https://github.com/vdcit/openstack-3node-vdcit.git
+git clone https://github.com/longsube/openstack-3node-vdcit.git
 
 mv /root/openstack-3node-vdcit/script-ubuntu1204/ script-ubuntu1204
 
@@ -288,11 +290,13 @@ Lưu ý: Cần thực hiện bước tải script từ github về như hướng
 Thực hiện các shell dưới để thiết lập hostname, gán ip và cài đặt các thành phần của nove trên máy COMPUTE NODE
 - Tải các gói cần thiết 
 ```sh
-apt-get update
+sudo rm -vf /var/lib/apt/lists/partial/*
+
+apt-get update -y && apt-get upgrade -y && apt-get dist-upgrade -y
 
 apt-get install git -y
 
-git clone https://github.com/vdcit/openstack-3node-vdcit.git
+git clone https://github.com/longsube/openstack-3node-vdcit.git
 
 mv /root/openstack-3node-vdcit/script-ubuntu1204/ script-ubuntu1204
 

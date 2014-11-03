@@ -60,12 +60,12 @@ Minh họa bằng hình:
 #### B.1. Thao tác trên tất cả các máy chủ
 Truy cập bằng tài khoản root vào máy các máy chủ và tải các gói, script chuẩn bị cho quá trình cài đặt
 ```sh
-apt-get update
+sudo rm -vf /var/lib/apt/lists/partial/*
 
-apt-get install git -y
+apt-get update -y && apt-get upgrade -y && apt-get dist-upgrade -y
 	
-git clone https://github.com/vdcit/openstack-3node-vdcit.git
-	
+git clone https://github.com/longsube/openstack-3node-vdcit.git
+
 mv /root/openstack-3node-vdcit/script-ubuntu1204/ script-ubuntu1204
 	
 cd script-ubuntu1204

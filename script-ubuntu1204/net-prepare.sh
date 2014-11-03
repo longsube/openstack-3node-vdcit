@@ -56,7 +56,7 @@ echo "############ Cai cac goi cho network node ############ "
 sleep 7 
 apt-get install neutron-plugin-ml2 neutron-plugin-openvswitch-agent openvswitch-datapath-dkms neutron-l3-agent neutron-dhcp-agent -y
 
-apt-get install openswan neutron-plugin-vpn-agent neutron-lbaas-agent -y
+apt-get install neutron-lbaas-agent -y
 
 #
 echo "############  CAU HINH CHO NETWORK NODE ############ "
@@ -85,7 +85,7 @@ lock_path = \$state_path/lock
 notification_driver = neutron.openstack.common.notifier.rpc_notifier
 
 #Khai bao cho LB va VPN
-service_plugins = router,lbaas,vpnaas
+#service_plugins = router,lbaas,vpnaas
 [quotas]
 
 [agent]
@@ -105,7 +105,7 @@ signing_dir = \$state_path/keystone-signing
 #connection = sqlite:////var/lib/neutron/neutron.sqlite
 [service_providers]
 service_provider=LOADBALANCER:Haproxy:neutron.services.loadbalancer.drivers.haproxy.plugin_driver.HaproxyOnHostPluginDriver:default
-service_provider=VPN:openswan:neutron.services.vpn.service_drivers.ipsec.IPsecVPNDriver:default
+#service_provider=VPN:openswan:neutron.services.vpn.service_drivers.ipsec.IPsecVPNDriver:default
 EOF
 #
 echo "############ Sua file cau hinh L3 AGENT ############"
@@ -213,24 +213,24 @@ interface_driver = neutron.agent.linux.interface.OVSInterfaceDriver
 [haproxy]
 EOF
 
-echo "############ Sua file cau hinh VPN AGENT ############"
-sleep 7 
+#echo "############ Sua file cau hinh VPN AGENT ############"
+#sleep 7 
 #
-vpnagent=/etc/neutron/vpn_agent.ini
-test -f $vpnagent.orig || cp $vpnagent $vpnagent.orig
-rm $vpnagent
-touch $vpnagent
+#vpnagent=/etc/neutron/vpn_agent.ini
+#test -f $vpnagent.orig || cp $vpnagent $vpnagent.orig
+#rm $vpnagent
+#touch $vpnagent
 
-cat << EOF >> $vpnagent
-[DEFAULT]
-interface_driver = neutron.agent.linux.interface.OVSInterfaceDriver
+#cat << EOF >> $vpnagent
+#[DEFAULT]
+#interface_driver = neutron.agent.linux.interface.OVSInterfaceDriver
 
-[vpnagent]
-vpn_device_driver = neutron.services.vpn.device_drivers.ipsec.OpenSwanDriver
+#[vpnagent]
+#vpn_device_driver = neutron.services.vpn.device_drivers.ipsec.OpenSwanDriver
 
-[ipsec]
-ipsec_status_check_interval=60
-EOF
+#[ipsec]
+#ipsec_status_check_interval=60
+#EOF
 
 echo "############  Khoi dong lai OpenvSwitch ############"
 sleep 7
@@ -260,7 +260,7 @@ echo "service neutron-l3-agent restart" >> /etc/rc.local
 echo "service neutron-dhcp-agent restart" >> /etc/rc.local
 echo "service neutron-metadata-agent restart" >> /etc/rc.local
 echo "service neutron-lbaas-agent restart" >> /etc/rc.local
-echo "service neutron-vpn-agent restart" >> /etc/rc.local
+#echo "service neutron-vpn-agent restart" >> /etc/rc.local
 echo "exit 0" >> /etc/rc.local
 
 

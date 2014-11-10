@@ -52,6 +52,10 @@ echo "net.ipv4.conf.all.rp_filter=0" >> /etc/sysctl.conf
 echo "net.ipv4.conf.default.rp_filter=0" >> /etc/sysctl.conf
 sysctl -p 
 
+echo "########## CAI DAT nova-novncproxy trên Network Node ##########"
+sleep 5 
+apt-get -y install nova-novncproxy
+
 echo "############ Cai cac goi cho network node ############ "
 sleep 7 
 apt-get install neutron-plugin-ml2 neutron-plugin-openvswitch-agent openvswitch-datapath-dkms neutron-l3-agent neutron-dhcp-agent -y

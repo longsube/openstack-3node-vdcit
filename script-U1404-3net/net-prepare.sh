@@ -138,7 +138,7 @@ state_path = /var/lib/neutron
 lock_path = \$state_path/lock
 notification_driver = neutron.openstack.common.notifier.rpc_notifier
 
-#Khai bao cho LB va VPN
+#Khai bao cho LB
 service_plugins = router,lbaas
 [quotas]
 

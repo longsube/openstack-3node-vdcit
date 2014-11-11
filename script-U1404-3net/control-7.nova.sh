@@ -44,9 +44,9 @@ rabbit_host = controller
 rabbit_password = $RABBIT_PASS
 
 # Cau hinh cho VNC
-my_ip = $CON_MGNT_IP
-vncserver_listen = $CON_MGNT_IP
-vncserver_proxyclient_address = $CON_MGNT_IP
+#my_ip = $CON_MGNT_IP
+#vncserver_listen = $CON_MGNT_IP
+#vncserver_proxyclient_address = $CON_MGNT_IP
 
 # Tu dong Start VM khi reboot OpenStack
 resume_guests_state_on_host_boot=True
@@ -105,7 +105,7 @@ service nova-cert restart
 service nova-consoleauth restart
 service nova-scheduler restart
 service nova-conductor restart
-service nova-novncproxy restart
+#service nova-novncproxy restart
 sleep 7 
 echo "########## KHOI DONG NOVA LAN 2 ##########"
 service nova-api restart
@@ -113,7 +113,7 @@ service nova-cert restart
 service nova-consoleauth restart
 service nova-scheduler restart
 service nova-conductor restart
-service nova-novncproxy restart
+#service nova-novncproxy restart
 
 echo "########## KIEM TRA LAI DICH VU NOVA ##########"
 nova-manage service list

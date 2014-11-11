@@ -42,11 +42,10 @@ nova_admin_tenant_id = $SERVICE_ID
 nova_admin_password = $ADMIN_PASS
 nova_admin_auth_url = http://controller:35357/v2.0
 core_plugin = ml2
-service_plugins = router
 allow_overlapping_ips = True
 
-# Khai bao cho VPN, LB 
-service_plugins = router,lbaas,vpnaas
+# Khai bao cho LB 
+service_plugins = router,lbaas
 
 [quotas]
 
@@ -68,7 +67,7 @@ connection = mysql://neutron:$ADMIN_PASS@controller/neutron
 
 [service_providers]
 service_provider=LOADBALANCER:Haproxy:neutron.services.loadbalancer.drivers.haproxy.plugin_driver.HaproxyOnHostPluginDriver:default
-service_provider=VPN:openswan:neutron.services.vpn.service_drivers.ipsec.IPsecVPNDriver:default
+#service_provider=VPN:openswan:neutron.services.vpn.service_drivers.ipsec.IPsecVPNDriver:default
 
 EOF
 

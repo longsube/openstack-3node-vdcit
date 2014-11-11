@@ -89,9 +89,9 @@ rabbit_host = controller
 rabbit_password = $RABBIT_PASS
 
 # Cau hinh cho VNC
-my_ip = $CON_MGNT_IP
-vncserver_listen = $CON_MGNT_IP
-vncserver_proxyclient_address = $CON_MGNT_IP
+my_ip = $NET_MGNT_IP
+vncserver_listen = $NET_MGNT_IP
+vncserver_proxyclient_address = $NET_MGNT_IP
 
 [database]
 connection = mysql://nova:$ADMIN_PASS@controller/nova
@@ -310,6 +310,15 @@ service neutron-metadata-agent restart
 service neutron-lbaas-agent restart
 #service neutron-vpn-agent restart
 
+echo "########## KHOI DONG LAI NOVA ##########"
+sleep 7 
+service nova-novncproxy restart
+sleep 7 
+
+echo "########## KHOI DONG NOVA LAN 2 ##########"
+sleep 7 
+service nova-novncproxy restart
+sleep 7 
 
 sed -i "s/exit 0/# exit 0/g" /etc/rc.local
 echo "service openvswitch-switch restart" >> /etc/rc.local

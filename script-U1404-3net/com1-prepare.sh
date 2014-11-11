@@ -120,7 +120,7 @@ my_ip = $COM1_MGNT_IP
 vnc_enabled = True
 vncserver_listen = 0.0.0.0
 vncserver_proxyclient_address = $COM1_MGNT_IP
-novncproxy_base_url = http://$CON_EXT_IP:6080/vnc_auto.html
+novncproxy_base_url = http://$NET_EXT_IP:6080/vnc_auto.html
 glance_host = controller
 
 # Cho phep chen password khi khoi tao

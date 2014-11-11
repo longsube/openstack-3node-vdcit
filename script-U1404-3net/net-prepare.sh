@@ -56,11 +56,62 @@ echo "########## CAI DAT nova-novncproxy trên Network Node ##########"
 sleep 5 
 apt-get -y install nova-novncproxy
 
+######## SAO LUU CAU HINH cho NOVA ##########"
+sleep 7
+
+#
+controlnova=/etc/nova/nova.conf
+test -f $controlnova.orig || cp $controlnova $controlnova.orig
+rm $controlnova
+touch $controlnova
+cat << EOF >> $controlnova
+[DEFAULT]
+dhcpbridge_flagfile=/etc/nova/nova.conf
+dhcpbridge=/usr/bin/nova-dhcpbridge
+logdir=/var/log/nova
+state_path=/var/lib/nova
+lock_path=/var/lock/nova
+force_dhcp_release=True
+iscsi_helper=tgtadm
+libvirt_use_virtio_for_bridges=True
+connection_type=libvirt
+root_helper=sudo nova-rootwrap /etc/nova/rootwrap.conf
+verbose=True
+ec2_private_dns_show_ip=True
+api_paste_config=/etc/nova/api-paste.ini
+volumes_path=/var/lib/nova/volumes
+enabled_apis=ec2,osapi_compute,metadata
+auth_strategy = keystone
+
+# Khai bao cho RABBITMQ
+rpc_backend = rabbit
+rabbit_host = controller
+rabbit_password = $RABBIT_PASS
+
+# Cau hinh cho VNC
+my_ip = $CON_MGNT_IP
+vncserver_listen = $CON_MGNT_IP
+vncserver_proxyclient_address = $CON_MGNT_IP
+
+[database]
+connection = mysql://nova:$ADMIN_PASS@controller/nova
+
+[keystone_authtoken]
+auth_uri = http://controller:5000
+auth_host = controller
+auth_port = 35357
+auth_protocol = http
+admin_tenant_name = service
+admin_user = nova
+admin_password = $ADMIN_PASS
+EOF
+
+
 echo "############ Cai cac goi cho network node ############ "
 sleep 7 
 apt-get install neutron-plugin-ml2 neutron-plugin-openvswitch-agent openvswitch-datapath-dkms neutron-l3-agent neutron-dhcp-agent -y
 
-apt-get install openswan neutron-plugin-vpn-agent neutron-lbaas-agent -y
+apt-get install neutron-lbaas-agent -y
 
 #
 echo "############  CAU HINH CHO NETWORK NODE ############ "
@@ -81,7 +132,6 @@ rpc_backend = neutron.openstack.common.rpc.impl_kombu
 rabbit_host = controller
 rabbit_password = $RABBIT_PASS
 core_plugin = ml2
-service_plugins = router
 allow_overlapping_ips = True
 verbose = True
 state_path = /var/lib/neutron
@@ -89,7 +139,7 @@ lock_path = \$state_path/lock
 notification_driver = neutron.openstack.common.notifier.rpc_notifier
 
 #Khai bao cho LB va VPN
-service_plugins = router,lbaas,vpnaas
+service_plugins = router,lbaas
 [quotas]
 
 [agent]
@@ -109,7 +159,7 @@ signing_dir = \$state_path/keystone-signing
 #connection = sqlite:////var/lib/neutron/neutron.sqlite
 [service_providers]
 service_provider=LOADBALANCER:Haproxy:neutron.services.loadbalancer.drivers.haproxy.plugin_driver.HaproxyOnHostPluginDriver:default
-service_provider=VPN:openswan:neutron.services.vpn.service_drivers.ipsec.IPsecVPNDriver:default
+#service_provider=VPN:openswan:neutron.services.vpn.service_drivers.ipsec.IPsecVPNDriver:default
 EOF
 #
 echo "############ Sua file cau hinh L3 AGENT ############"
@@ -144,6 +194,10 @@ use_namespaces = True
 verbose = True
 EOF
 #
+
+#FIX LOI MTU
+echo "dhcp-option-force=26,1454" > /etc/neutron/dnsmasq-neutron.conf
+
 echo "############  Sua file cau hinh METADATA AGENT ############"
 sleep 7 
 #
@@ -217,24 +271,24 @@ interface_driver = neutron.agent.linux.interface.OVSInterfaceDriver
 [haproxy]
 EOF
 
-echo "############ Sua file cau hinh VPN AGENT ############"
-sleep 7 
+#echo "############ Sua file cau hinh VPN AGENT ############"
+#sleep 7 
 #
-vpnagent=/etc/neutron/vpn_agent.ini
-test -f $vpnagent.orig || cp $vpnagent $vpnagent.orig
-rm $vpnagent
-touch $vpnagent
+#vpnagent=/etc/neutron/vpn_agent.ini
+#test -f $vpnagent.orig || cp $vpnagent $vpnagent.orig
+#rm $vpnagent
+#touch $vpnagent
 
-cat << EOF >> $vpnagent
-[DEFAULT]
-interface_driver = neutron.agent.linux.interface.OVSInterfaceDriver
+#cat << EOF >> $vpnagent
+#[DEFAULT]
+#interface_driver = neutron.agent.linux.interface.OVSInterfaceDriver
 
-[vpnagent]
-vpn_device_driver = neutron.services.vpn.device_drivers.ipsec.OpenSwanDriver
+#[vpnagent]
+#vpn_device_driver = neutron.services.vpn.device_drivers.ipsec.OpenSwanDriver
 
-[ipsec]
-ipsec_status_check_interval=60
-EOF
+#[ipsec]
+#ipsec_status_check_interval=60
+#EOF
 
 echo "############  Khoi dong lai OpenvSwitch ############"
 sleep 7
@@ -245,7 +299,7 @@ service neutron-l3-agent restart
 service neutron-dhcp-agent restart
 service neutron-metadata-agent restart
 service neutron-lbaas-agent restart
-service neutron-vpn-agent restart
+#service neutron-vpn-agent restart
 
 sleep 15
 service openvswitch-switch restart
@@ -254,7 +308,7 @@ service neutron-l3-agent restart
 service neutron-dhcp-agent restart
 service neutron-metadata-agent restart
 service neutron-lbaas-agent restart
-service neutron-vpn-agent restart
+#service neutron-vpn-agent restart
 
 
 sed -i "s/exit 0/# exit 0/g" /etc/rc.local
@@ -264,7 +318,7 @@ echo "service neutron-l3-agent restart" >> /etc/rc.local
 echo "service neutron-dhcp-agent restart" >> /etc/rc.local
 echo "service neutron-metadata-agent restart" >> /etc/rc.local
 echo "service neutron-lbaas-agent restart" >> /etc/rc.local
-echo "service neutron-vpn-agent restart" >> /etc/rc.local
+#echo "service neutron-vpn-agent restart" >> /etc/rc.local
 echo "exit 0" >> /etc/rc.local
 
 

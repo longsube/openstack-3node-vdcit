@@ -20,6 +20,9 @@ sudo a2enconf servername
 # Fix loi apache cho ubuntu 12.04
 # echo "ServerName localhost" >> /etc/apache2/httpd.conf
 
+echo "########## Cau hinh enable LB trên Dashboard ##########"
+sleep 5
+sed -i "s/'enable_lb': False/'enable_lb': True/" /etc/openstack-dashboard/local_settings.py
 
 echo "########## Tao trang redirect ##########"
 
